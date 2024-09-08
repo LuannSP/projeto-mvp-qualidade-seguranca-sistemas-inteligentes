@@ -3,16 +3,10 @@ import pickle
 
 class Pipeline:
     
-    @staticmethod
-    def load_pipeline(path: str):
-        """Carrega o pipeline a partir de um arquivo pickle.
-
-        Args:
-            path (str): Caminho para o arquivo do pipeline.
-
-        Returns:
-            pipeline: Pipeline carregado.
+    def load_pipeline(path):
+        """Carregamos o pipeline construindo durante a fase de treinamento
         """
+        
         with open(path, 'rb') as file:
-            pipeline = pickle.load(file)
-        return pipeline
+             pipeline = pickle.load(file)
+        return pipeline     

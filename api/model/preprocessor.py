@@ -4,71 +4,43 @@ import numpy as np
 
 class PreProcessor:
 
-    def separate_test_training(self, dataset, test_size, seed=7):
-        """Realiza o pré-processamento dos dados, incluindo a divisão em conjuntos de treino e teste, 
-        e a normalização dos dados.
+    def separrate_test_training(self, dataset, percentual_teste, seed=7):
+        """ Cuida de todo o pré-processamento. """
+        # limpeza dos dados e eliminação de outliers
 
-        Args:
-            dataset (pd.DataFrame): Conjunto de dados a ser processado.
-            test_size (float): Percentual do conjunto de dados a ser usado como teste.
-            seed (int): Semente para a reprodutibilidade.
+        # feature selection
 
-        Returns:
-            tuple: Conjuntos de dados de treino e teste (X_train, X_test, Y_train, Y_test).
-        """
-        # Dividir dados em treino e teste
-        X_train, X_test, Y_train, Y_test = self.__prepare_holdout(dataset, test_size, seed)
+        # divisão em treino e teste
+        X_train, X_test, Y_train, Y_test = self.__prepare_holdout(dataset,
+                                                                  percentual_teste,
+                                                                  seed)
+        # normalização/padronização
         
-        # Normalizar os dados de treino
-        X_train = self.scaler(X_train)
-        X_test = self.scaler(X_test)
-
-        return X_train, X_test, Y_train, Y_test
+        return (X_train, X_test, Y_train, Y_test)
     
-    def __prepare_holdout(self, dataset, test_size, seed):
-        """Divide os dados em conjuntos de treino e teste.
-
-        Args:
-            dataset (pd.DataFrame): Conjunto de dados a ser dividido.
-            test_size (float): Percentual do conjunto de dados a ser usado como teste.
-            seed (int): Semente para a reprodutibilidade.
-
-        Returns:
-            tuple: Conjuntos de dados de treino e teste (X_train, X_test, Y_train, Y_test).
+    def __prepare_holdout(self, dataset, percentual_teste, seed):
+        """ Divide os dados em treino e teste usando o método holdout.
+        Assume que a variável target está na última coluna.
+        O parâmetro test_size é o percentual de dados de teste.
         """
-        data = dataset.values
-        X = data[:, :-1]  # Todas as colunas exceto a última
-        Y = data[:, -1]   # Última coluna como target
-        return train_test_split(X, Y, test_size=test_size, random_state=seed)
+        dados = dataset.values
+        X = dados[:, 0:-1]
+        Y = dados[:, -1]
+        return train_test_split(X, Y, test_size=percentual_teste, random_state=seed)
     
-    @staticmethod
     def prepare_form(form):
-        """Prepara os dados recebidos do formulário para serem usados no modelo.
-
-        Args:
-            form: Objeto com os dados do formulário.
-
-        Returns:
-            np.ndarray: Dados preparados para predição.
-        """
-        X_input = np.array([
-            form.tv,
-            form.radio,
-            form.jornal,
-            form.vendas
-        ])
-        # Ajusta a forma dos dados para que o modelo possa fazer a predição
-        return X_input.reshape(1, -1)
+        """ Prepara os dados recebidos do front para serem usados no modelo. """
+        X_input = np.array([form.TV,
+                            form.Radio,
+                            form.Jornal,
+                        ])
+        # Faremos o reshape para que o modelo entenda que estamos passando
+        X_input = X_input.reshape(1, -1)
+        return X_input
     
-    @staticmethod
-    def scaler(X):
-        """Normaliza os dados usando um scaler previamente treinado.
-
-        Args:
-            X (np.ndarray): Dados a serem normalizados.
-
-        Returns:
-            np.ndarray: Dados normalizados.
-        """
+    def load_scaler(X_train):
+        """ Normaliza os dados. """
+        # normalização/padronização
         scaler = pickle.load(open('./MachineLearning/scalers/minmax_scaler_advertising.pkl', 'rb'))
-        return scaler.transform(X)
+        reescaled_X_train = scaler.transform(X_train)
+        return reescaled_X_train    

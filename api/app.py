@@ -1,9 +1,7 @@
 from flask_openapi3 import OpenAPI, Info, Tag
 from flask import redirect
 from urllib.parse import unquote
-
 from sqlalchemy.exc import IntegrityError
-
 from model import *
 from schemas import *
 from flask_cors import CORS
@@ -24,6 +22,28 @@ def home():
     """Redireciona para Swagger.
     """
     return redirect('/openapi/swagger')
+
+
+
+
+charger = Charger()
+model = Model()
+appraiser = Appraiser()
+   
+url_dados = "./MachineLearning/data/advertising.csv"
+colunas = ['TV', 'Radio', 'Jornal','Resultado']
+
+dataset = Charger.data_loader(url_dados, colunas)
+array = dataset.values
+X = array[:,0:3]
+y = array[:,3]
+
+# lr_path = './MachineLearning/models/rf_advertising_classifier.pkl'
+# modelo_lr = Model.load_model(lr_path)
+
+# acuracia_lr = Appraiser.assess(modelo_lr, X, y)
+
+# print(acuracia_lr)
 
 # # Rota de listagem de pacientes
 # @app.get('/pacientes', tags=[paciente_tag],

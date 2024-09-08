@@ -2,40 +2,39 @@ import numpy as np
 import pickle
 import joblib
 from model.preprocessor import PreProcessor
+from typing import Any
+
 
 class Model:
 
-    @staticmethod
-    def load_model(path: str):
-        """Carrega um modelo a partir de um arquivo, dependendo da extensão.
+    # TODO: Guardar model como atributo e o preditor receber as entradas.
+    # TODO: preditor -> realiza_predicao
 
-        Args:
-            path (str): Caminho para o arquivo do modelo.
+    def load_model(path):
+        """Carrega o modelo de um arquivo .pkl"""
+        try:
+            # Verifica se o arquivo termina com .pkl
+            if path.endswith('.pkl'):
+                with open(path, 'rb') as file:
+                    model = pickle.load(file)
+                    return model
+            else:
+                raise Exception(
+                    'Formato de arquivo não suportado. Use um arquivo .pkl.')
 
-        Returns:
-            model: Modelo carregado.
-        
-        Raises:
-            Exception: Se o formato do arquivo não for suportado.
+        # Tratamento de erros comuns
+        except FileNotFoundError:
+            print(f"Erro: Arquivo {path} não encontrado.")
+        except pickle.UnpicklingError:
+            print(f"Erro: O arquivo {
+                  path} parece estar corrompido ou não é um arquivo pickle válido.")
+        except Exception as e:
+            print(f"Erro ao carregar o modelo: {e}")
+
+        return None
+
+    def perform_prediction(model, X_input):
+        """Realiza a predição de um paciente com base no modelo treinado
         """
-        if path.endswith('.pkl'):
-            with open(path, 'rb') as file:
-                model = pickle.load(file)
-        elif path.endswith('.joblib'):
-            model = joblib.load(path)
-        else:
-            raise Exception('Formato de arquivo não suportado')
-        return model
-    
-    @staticmethod
-    def perform_predication(model, X_input):
-        """Realiza a predição com base no modelo treinado.
-
-        Args:
-            model: Modelo treinado.
-            X_input: Dados de entrada para a predição.
-
-        Returns:
-            numpy.ndarray: Resultados da predição.
-        """
-        return model.predict(X_input)
+        diagnosis = model.predict(X_input)
+        return diagnosis

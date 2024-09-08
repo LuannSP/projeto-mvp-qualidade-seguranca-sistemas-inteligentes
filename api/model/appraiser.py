@@ -1,24 +1,14 @@
 from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_score
 from model.model import Model
 
+
 class Appraiser:
 
-    @staticmethod
     def assess(model, X_test, Y_test):
+        """ Faz uma predição e avalia o modelo. Poderia parametrizar o tipo de
+        avaliação, entre outros.
         """
-        Avalia o desempenho do modelo com base em métricas de precisão.
+        predictions = Model.perform_prediction(model, X_test)
 
-        Arguments:
-        model: O modelo de machine learning a ser avaliado.
-        X_test: Dados de entrada para o teste.
-        Y_test: Valores reais para comparação com as previsões.
-
-        Returns:
-        A acurácia do modelo nas predições.
-        """
-        
-        # Fazendo previsões com o modelo fornecido
-        predictions = Model.perform_predication(model, X_test)
-        
-        # Calculando e retornando a acurácia das previsões
+        # Caso o seu problema tenha mais do que duas classes, altere o parâmetro average
         return accuracy_score(Y_test, predictions)

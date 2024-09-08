@@ -7,40 +7,38 @@ import numpy as np
 
 class AdvertisingSchema(BaseModel):
     """ Define como um novo dado de publicidade deve ser representado """
-    tv: str = 100.0
-    radio: int = 200.0
-    jornal: int = 300.0
-    vendas: str = "B"  # Classificação das vendas: 'A' para Alto, 'M' para Médio, 'B' para Baixo
-
+    tv: float = 100.0
+    radio: float = 200.0
+    jornal: float = 300.0
+    resultado: int = 0  # Novo campo 'resultado' como inteiro
+    # Removido 'vendas' pois a classificação é determinada pelo modelo
 
 class AdvertisingViewSchema(BaseModel):
     """ Define como um dado de publicidade será retornado """
     id: int = 1
-    tv: str = 100.0
-    radio: int = 200.0
-    jornal: int = 300.0
-    vendas: str = "B"  # Classificação das vendas: 'A' para Alto, 'M' para Médio, 'B' para Baixo
+    tv: float = 100.0
+    radio: float = 200.0
+    jornal: float = 300.0
+    resultado: int = 0  # Novo campo 'resultado' como inteiro
+    # Removido 'vendas' pois a classificação é determinada pelo modelo
 
-
-class AdvertisingBuscaSchema(BaseModel):
+class AdvertisingSearchSchema(BaseModel):
     """ Define como deve ser a estrutura que representa a busca por publicidade """
-    tv: Optional[str] = None
-    radio: Optional[int] = None
-    jornal: Optional[int] = None
-    vendas: Optional[str] = None
+    tv: Optional[float] = None
+    radio: Optional[float] = None
+    jornal: Optional[float] = None
+    resultado: Optional[int] = None
 
-
-class ListaAdvertisingSchema(BaseModel):
+class ListAdvertisingSchema(BaseModel):
     """ Define como uma lista de dados de publicidade será representada """
     advertising: List[AdvertisingViewSchema]
-
 
 class AdvertisingDelSchema(BaseModel):
     """ Define como um dado de publicidade para deleção será representado """
     id: int = 1
 
 # Apresenta apenas os dados de um dado de publicidade
-def present_advertising(advertising: Advertising):
+def present_advertising(advertising: Advertising) -> dict:
     """ Retorna uma representação do dado de publicidade seguindo o schema definido em
         AdvertisingViewSchema.
     """
@@ -49,11 +47,11 @@ def present_advertising(advertising: Advertising):
         "tv": advertising.tv,
         "radio": advertising.radio,
         "jornal": advertising.jornal,
-        "vendas": advertising.vendas
+        "resultado": advertising.resultado
     }
 
 # Apresenta uma lista de dados de publicidade
-def present_advertisings(advertisings: List[Advertising]):
+def present_advertisings(advertisings: List[Advertising]) -> dict:
     """ Retorna uma representação de uma lista de dados de publicidade seguindo o schema definido em
         AdvertisingViewSchema.
     """
@@ -64,7 +62,7 @@ def present_advertisings(advertisings: List[Advertising]):
             "tv": advertising.tv,
             "radio": advertising.radio,
             "jornal": advertising.jornal,
-            "vendas": advertising.vendas
+            "resultado": advertising.resultado
         })
 
     return {"advertising": result}

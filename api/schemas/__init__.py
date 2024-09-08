@@ -1,10 +1,11 @@
 from schemas.advertising_schema import (
-    PacienteSchema, 
-    PacienteBuscaSchema, 
-    PacienteViewSchema, 
-    PacienteDelSchema,
-    apresenta_pacientes, 
-    apresenta_paciente
+    AdvertisingSchema, 
+    AdvertisingSearchSchema, 
+    AdvertisingViewSchema, 
+    AdvertisingDelSchema,
+    ListAdvertisingSchema, 
+    present_advertising,
+    present_advertisings
 )
 
 from schemas.error_schema import ErrorSchema
