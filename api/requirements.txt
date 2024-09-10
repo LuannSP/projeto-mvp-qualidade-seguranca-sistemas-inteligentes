@@ -1,3 +1,4 @@
+scikit-learn==1.3.2
 Flask
 Flask-Cors
 flask-openapi3
@@ -7,9 +8,7 @@ pydantic
 SQLAlchemy
 SQLAlchemy-Utils
 typing_extensions
-scikit-learn
 pandas
-scikit-learn
 numpy
 pytest
 jupyter

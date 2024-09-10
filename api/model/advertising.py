@@ -12,7 +12,7 @@ class Advertising(Base):
     tv = Column("TV", Float)                 # Investimento em TV (float para aceitar valores decimais)
     radio = Column("Radio", Float)           # Investimento em Rádio (float para aceitar valores decimais)
     jornal = Column("Jornal", Float)         # Investimento em Jornal (float para aceitar valores decimais)
-    resultado = Column("Resultado", Integer) # Classificação de vendas como valor inteiro
+    resultado = Column("Resultado", Integer, nullable=True) # Classificação de vendas como valor inteiro
     data_insercao = Column(DateTime, default=datetime.now())  # Data de inserção no banco
 
     def __init__(self, tv: float, radio: float, jornal: float, resultado: int, 

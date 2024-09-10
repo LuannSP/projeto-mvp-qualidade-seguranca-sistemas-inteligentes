@@ -23,16 +23,16 @@ class PreProcessor:
         Assume que a variável target está na última coluna.
         O parâmetro test_size é o percentual de dados de teste.
         """
-        dados = dataset.values
-        X = dados[:, 0:-1]
-        Y = dados[:, -1]
+        data = dataset.values
+        X = data[:,0:3]
+        Y = data[:,3]
         return train_test_split(X, Y, test_size=percentual_teste, random_state=seed)
     
     def prepare_form(form):
         """ Prepara os dados recebidos do front para serem usados no modelo. """
-        X_input = np.array([form.TV,
-                            form.Radio,
-                            form.Jornal,
+        X_input = np.array([form.tv,
+                            form.radio,
+                            form.jornal,
                         ])
         # Faremos o reshape para que o modelo entenda que estamos passando
         X_input = X_input.reshape(1, -1)

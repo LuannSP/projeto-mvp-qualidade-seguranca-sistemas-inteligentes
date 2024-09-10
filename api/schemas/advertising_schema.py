@@ -10,8 +10,6 @@ class AdvertisingSchema(BaseModel):
     tv: float = 100.0
     radio: float = 200.0
     jornal: float = 300.0
-    resultado: int = 0  # Novo campo 'resultado' como inteiro
-    # Removido 'vendas' pois a classificação é determinada pelo modelo
 
 class AdvertisingViewSchema(BaseModel):
     """ Define como um dado de publicidade será retornado """
@@ -19,8 +17,7 @@ class AdvertisingViewSchema(BaseModel):
     tv: float = 100.0
     radio: float = 200.0
     jornal: float = 300.0
-    resultado: int = 0  # Novo campo 'resultado' como inteiro
-    # Removido 'vendas' pois a classificação é determinada pelo modelo
+    resultado: int = 0 
 
 class AdvertisingSearchSchema(BaseModel):
     """ Define como deve ser a estrutura que representa a busca por publicidade """
