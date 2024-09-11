@@ -21,10 +21,7 @@ class AdvertisingViewSchema(BaseModel):
 
 class AdvertisingSearchSchema(BaseModel):
     """ Define como deve ser a estrutura que representa a busca por publicidade """
-    tv: Optional[float] = None
-    radio: Optional[float] = None
-    jornal: Optional[float] = None
-    resultado: Optional[int] = None
+    resultado: int = 1
 
 class ListAdvertisingSchema(BaseModel):
     """ Define como uma lista de dados de publicidade será representada """
@@ -36,9 +33,7 @@ class AdvertisingDelSchema(BaseModel):
 
 # Apresenta apenas os dados de um dado de publicidade
 def present_advertising(advertising: Advertising) -> dict:
-    """ Retorna uma representação do dado de publicidade seguindo o schema definido em
-        AdvertisingViewSchema.
-    """
+    """ Retorna uma representação do dado de publicidade seguindo o schema definido em AdvertisingViewSchema """
     return {
         "id": advertising.id,
         "tv": advertising.tv,
@@ -49,9 +44,7 @@ def present_advertising(advertising: Advertising) -> dict:
 
 # Apresenta uma lista de dados de publicidade
 def present_advertisings(advertisings: List[Advertising]) -> dict:
-    """ Retorna uma representação de uma lista de dados de publicidade seguindo o schema definido em
-        AdvertisingViewSchema.
-    """
+    """ Retorna uma representação de uma lista de dados de publicidade seguindo o schema definido em AdvertisingViewSchema """
     result = []
     for advertising in advertisings:
         result.append({

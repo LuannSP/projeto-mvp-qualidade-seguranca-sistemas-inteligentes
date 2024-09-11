@@ -14,17 +14,29 @@ CORS(app)
 
 # Definindo tags para agrupamento das rotas
 home_tag = Tag(name="Documentação",description="Redireciona para a documentação do Swagger.")
-advertising_tag = Tag(name="Propaganda", description="XXXXX predição de vendas com base em investimentos publicitários em TV, rádio e jornal")
+advertising_tag = Tag(name="Propaganda", description="Adição, visualização, remoção e previsão de vendas com base em investimentos em TV, rádio e jornal.")
 
-# Rota home
+# Rota Inicial
 @app.get('/', tags=[home_tag])
 def home():
-    """Redireciona para Swagger.
-    """
+    """ Redireciona para Swagger """
     return redirect('/openapi/swagger')
 
+# Rota para inserir um novo registro
 @app.post('/propaganda', tags=[advertising_tag],responses={"200": AdvertisingViewSchema, "400": ErrorSchema, "409": ErrorSchema})
 def predict(form: AdvertisingSchema):
+    """ Adiciona um novo registro de investimento publicitário à base de dados
+    Realiza a predição de vendas com base nos valores investidos em TV, rádio e jornal, 
+    e armazena o registro no banco de dados.
+
+    Args:
+        tv (float): valor investido em propagandas de TV
+        radio (float): valor investido em propagandas de rádio
+        jornal (float): valor investido em propagandas de jornal
+
+    Returns:
+        dict: representação do registro de investimento publicitário e a predição de vendas associada
+    """
     tv = form.tv
     radio = form.radio
     jornal = form.jornal
@@ -48,89 +60,70 @@ def predict(form: AdvertisingSchema):
         return present_advertising(advertising), 200
 
     except Exception as e:
-        error_msg = "Não foi possível salvar novo item :/"
+        error_msg = "Erro ao inserir um registro."
         return {"message": error_msg}, 400
 
-# # Rota de listagem de pacientes
-# @app.get('/pacientes', tags=[paciente_tag],
-#          responses={"200": PacienteViewSchema, "404": ErrorSchema})
-# def get_pacientes():
-#     """Lista todos os pacientes cadastrados na base
-#     Args:
-#        none
+# Rota de listagem de investimentos
+@app.get('/propagandas', tags=[advertising_tag],responses={"200": AdvertisingViewSchema, "404": ErrorSchema})
+def get_advertisings():
+    """ Lista todos os registros de investimentos publicitários cadastrados na base de dados.
+    
+    Args:
+        none
 
-#     Returns:
-#         list: lista de pacientes cadastrados na base
-#     """
-#     # Criando conexão com a base
-#     session = Session()
-#     # Buscando todos os pacientes
-#     pacientes = session.query(Paciente).all()
+    Returns:
+        list: lista de investimentos publicitários cadastrados, incluindo valores de TV, rádio, jornal e o resultado previsto.
+    """
+    session = Session()
+    pacientes = session.query(Advertising).all()
 
-#     if not pacientes:
-#         # Se não houver pacientes
-#         return {"pacientes": []}, 200
-#     else:
-#         print(pacientes)
-#         return apresenta_pacientes(pacientes), 200
+    if not pacientes:
+        return {"advertisings": []}, 200
+    else:
+        return present_advertisings(pacientes), 200
 
-# # Métodos baseados em nome
-# # Rota de busca de paciente por nome
-# @app.get('/paciente', tags=[paciente_tag],
-#          responses={"200": PacienteViewSchema, "404": ErrorSchema})
-# def get_paciente(query: PacienteBuscaSchema):
-#     """Faz a busca por um paciente cadastrado na base a partir do nome
+# Rota de remoção de investimentos por id.
+@app.delete('/propaganda', tags=[advertising_tag], responses={"200": AdvertisingViewSchema, "404": ErrorSchema})
+def delete_paciente(query: AdvertisingDelSchema):
+    """ Remove um investimento publicitário cadastrado na base a partir do ID.
 
-#     Args:
-#         nome (str): nome do paciente
+    Args:
+        id (int): ID do investimento publicitário
 
-#     Returns:
-#         dict: representação do paciente e diagnóstico associado
-#     """
+    Returns:
+        dict: Mensagem de sucesso ou erro
+    """
+    advertising_id = query.id  # Removido unquote pois o id é numérico
+    session = Session()
+    advertising = session.query(Advertising).filter(Advertising.id == advertising_id).first()
 
-#     paciente_nome = query.name
-#     # criando conexão com a base
-#     session = Session()
-#     # fazendo a busca
-#     paciente = session.query(Paciente).filter(Paciente.name == paciente_nome).first()
+    if not advertising:
+        error_msg = "Investimento não encontrado no banco de dados."
+        return {"message": error_msg}, 404
+    else:
+        session.delete(advertising)
+        session.commit()
+        return {"message": f"Investimento com o id: {advertising_id} removido com sucesso."}, 200
 
-#     if not paciente:
-#         # se o paciente não foi encontrado
-#         error_msg = f"Paciente {paciente_nome} não encontrado na base :/"
-#         return {"mesage": error_msg}, 404
-#     else:
-#         # retorna a representação do paciente
-#         return apresenta_paciente(paciente), 200
+# Rota de busca de investimentos por resultado
+@app.get('/propaganda', tags=[advertising_tag], responses={"200": ListAdvertisingSchema, "404": ErrorSchema})
+def get_advertising_by_result(query: AdvertisingSearchSchema):
+    """ Faz a busca por todos os investimentos publicitários cadastrados na base com o resultado especificado.
 
+    Args:
+        resultado (str): resultado do investimento publicitário
 
-# # Rota de remoção de paciente por nome
-# @app.delete('/paciente', tags=[paciente_tag],
-#             responses={"200": PacienteViewSchema, "404": ErrorSchema})
-# def delete_paciente(query: PacienteBuscaSchema):
-#     """Remove um paciente cadastrado na base a partir do nome
+    Returns:
+        dict: lista de investimentos publicitários associados ao resultado
+    """
+    advertising_result = query.resultado
+    session = Session()
+    advertisings = session.query(Advertising).filter(Advertising.resultado == advertising_result).all()
 
-#     Args:
-#         nome (str): nome do paciente
+    if not advertisings:
+        return {"advertisings": []}, 200
+    else:
+        return present_advertisings(advertisings), 200
 
-#     Returns:
-#         msg: Mensagem de sucesso ou erro
-#     """
-
-#     paciente_nome = unquote(query.name)
-
-#     # Criando conexão com a base
-#     session = Session()
-
-#     # Buscando paciente
-#     paciente = session.query(Paciente).filter(Paciente.name == paciente_nome).first()
-
-#     if not paciente:
-#         error_msg = "Paciente não encontrado na base :/"
-#         return {"message": error_msg}, 404
-#     else:
-#         session.delete(paciente)
-#         session.commit()
-#         return {"message": f"Paciente {paciente_nome} removido com sucesso!"}, 200
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)

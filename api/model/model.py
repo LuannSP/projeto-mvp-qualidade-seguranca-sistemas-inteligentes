@@ -7,13 +7,9 @@ from typing import Any
 
 class Model:
 
-    # TODO: Guardar model como atributo e o preditor receber as entradas.
-    # TODO: preditor -> realiza_predicao
-
     def load_model(path):
-        """Carrega o modelo de um arquivo .pkl"""
+        """ Carrega o modelo de um arquivo .pkl """
         try:
-            # Verifica se o arquivo termina com .pkl
             if path.endswith('.pkl'):
                 with open(path, 'rb') as file:
                     model = pickle.load(file)
@@ -22,7 +18,6 @@ class Model:
                 raise Exception(
                     'Formato de arquivo não suportado. Use um arquivo .pkl.')
 
-        # Tratamento de erros comuns
         except FileNotFoundError:
             print(f"Erro: Arquivo {path} não encontrado.")
         except pickle.UnpicklingError:
