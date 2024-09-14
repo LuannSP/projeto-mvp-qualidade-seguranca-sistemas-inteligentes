@@ -7,14 +7,15 @@ from schemas import *
 from flask_cors import CORS
 
 
-# Instanciando o objeto OpenAPI
+# Instanciando OpenAPI
 info = Info(title="API Advertising", version="1.0.0")
 app = OpenAPI(__name__, info=info)
 CORS(app)
 
 # Definindo tags para agrupamento das rotas
 home_tag = Tag(name="Documentação",description="Redireciona para a documentação do Swagger.")
-advertising_tag = Tag(name="Propaganda", description="Adição, visualização, remoção e previsão de vendas com base em investimentos em TV, rádio e jornal.")
+advertising_tag = Tag(name="Propaganda", description="Adição, visualização, remoção e previsão de vendas com base em investimentos em TV, Rádio e Jornal.")
+
 
 # Rota Inicial
 @app.get('/', tags=[home_tag])
@@ -22,17 +23,18 @@ def home():
     """ Redireciona para Swagger """
     return redirect('/openapi/swagger')
 
+
 # Rota para inserir um novo registro
-@app.post('/propaganda', tags=[advertising_tag],responses={"200": AdvertisingViewSchema, "400": ErrorSchema, "409": ErrorSchema})
+@app.post('/propaganda', tags=[advertising_tag], responses={"200": AdvertisingViewSchema, "400": ErrorSchema, "409": ErrorSchema})
 def predict(form: AdvertisingSchema):
     """ Adiciona um novo registro de investimento publicitário à base de dados
     Realiza a predição de vendas com base nos valores investidos em TV, rádio e jornal, 
     e armazena o registro no banco de dados.
 
     Args:
+        jornal (float): valor investido em propagandas de Jornal
+        radio (float): valor investido em propagandas de Rádio
         tv (float): valor investido em propagandas de TV
-        radio (float): valor investido em propagandas de rádio
-        jornal (float): valor investido em propagandas de jornal
 
     Returns:
         dict: representação do registro de investimento publicitário e a predição de vendas associada
@@ -44,13 +46,13 @@ def predict(form: AdvertisingSchema):
     X_input = PreProcessor.prepare_form(form)
     model_path = './MachineLearning/pipelines/rf_advertising_pipeline.pkl'
     modelo = Pipeline.load_pipeline(model_path)
-    resultado = int(Model.perform_prediction(modelo, X_input)[0])
+    result = int(Model.perform_prediction(modelo, X_input)[0])
 
     advertising = Advertising(
         tv=tv,
         radio=radio,
         jornal=jornal,
-        resultado=resultado
+        resultado=result
     )
 
     try:
@@ -63,11 +65,12 @@ def predict(form: AdvertisingSchema):
         error_msg = "Erro ao inserir um registro."
         return {"message": error_msg}, 400
 
+
 # Rota de listagem de investimentos
-@app.get('/propagandas', tags=[advertising_tag],responses={"200": AdvertisingViewSchema, "404": ErrorSchema})
+@app.get('/propagandas', tags=[advertising_tag], responses={"200": AdvertisingViewSchema, "404": ErrorSchema})
 def get_advertisings():
     """ Lista todos os registros de investimentos publicitários cadastrados na base de dados.
-    
+
     Args:
         none
 
@@ -75,16 +78,17 @@ def get_advertisings():
         list: lista de investimentos publicitários cadastrados, incluindo valores de TV, rádio, jornal e o resultado previsto.
     """
     session = Session()
-    pacientes = session.query(Advertising).all()
+    investment = session.query(Advertising).all()
 
-    if not pacientes:
+    if not investment:
         return {"advertisings": []}, 200
     else:
-        return present_advertisings(pacientes), 200
+        return present_advertisings(investment), 200
+
 
 # Rota de remoção de investimentos por id.
 @app.delete('/propaganda', tags=[advertising_tag], responses={"200": AdvertisingViewSchema, "404": ErrorSchema})
-def delete_paciente(query: AdvertisingDelSchema):
+def delete_investment(query: AdvertisingDelSchema):
     """ Remove um investimento publicitário cadastrado na base a partir do ID.
 
     Args:
@@ -105,13 +109,14 @@ def delete_paciente(query: AdvertisingDelSchema):
         session.commit()
         return {"message": f"Investimento com o id: {advertising_id} removido com sucesso."}, 200
 
+
 # Rota de busca de investimentos por resultado
 @app.get('/propaganda', tags=[advertising_tag], responses={"200": ListAdvertisingSchema, "404": ErrorSchema})
 def get_advertising_by_result(query: AdvertisingSearchSchema):
     """ Faz a busca por todos os investimentos publicitários cadastrados na base com o resultado especificado.
 
     Args:
-        resultado (str): resultado do investimento publicitário
+        resultado (integer): resultado do investimento publicitário
 
     Returns:
         dict: lista de investimentos publicitários associados ao resultado
@@ -124,6 +129,7 @@ def get_advertising_by_result(query: AdvertisingSearchSchema):
         return {"advertisings": []}, 200
     else:
         return present_advertisings(advertisings), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True)

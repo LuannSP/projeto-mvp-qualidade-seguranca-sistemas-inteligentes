@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <title>Sistema de Previsão de Impacto Publicitário</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema de previsão de impacto de investimentos em publicidade, ajudando a prever resultados com base em valores investidos em TV, Rádio e Jornal.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="img/logo.png" type="image/png">
+</head>
+
+<body>
+    <header>
+        <div class="title">
+            <h2>Bem-Vindo ao Advertising AI System</h2>
+            <br>
+            <p>Este sistema foi desenvolvido para ajudar a prever o impacto de investimentos em publicidade.</p>
+            <p>Preencha os valores de investimento em TV, Rádio e Jornal e clique em "Analisar" para ver o resultado.</p>
+        </div>
+    </header>
+    
+    <section class="newItem">
+        <div class="input-group">
+            <label for="newTV">Investimento em TV (R$)</label>
+            <input type="text" id="newTV" maxlength="13" value="0,00" onkeyup="formatCurrency(this)">
+        </div>
+        <div class="input-group">
+            <label for="newRadio">Investimento em Rádio (R$)</label>
+            <input type="text" id="newRadio" maxlength="13" value="0,00" onkeyup="formatCurrency(this)">
+        </div>
+        <div class="input-group">
+            <label for="newNewspaper">Investimento em Jornal (R$)</label>
+            <input type="text" id="newNewspaper" maxlength="13" value="0,00" onkeyup="formatCurrency(this)">
+        </div>        
+        <div class="button-container">
+            <span onclick="newItem()" class="addBtn">Analisar</span>
+        </div>
+    </section>
+    
+    <section class="items">
+        <div class="legend">
+            <h3 class="legend-title">Legenda:</h3>
+            <p><img src="img/green.png" alt="Alta" class="legend-icon"> Alta Performance - Representa os casos onde os investimentos resultaram em um desempenho muito acima da média.</p>
+            <p><img src="img/yellow.png" alt="Média" class="legend-icon"> Desempenho Moderado - Refere-se a situações onde o desempenho foi razoável, mas não excepcional.</p>
+            <p><img src="img/red.png" alt="Baixa" class="legend-icon"> Baixa Performance - Indica que os investimentos resultaram em um desempenho inferior ao esperado.</p>
+        </div>
+        <div class="filter">
+            <h3 class="filter-title">Filtro:</h3>
+            <select id="performanceFilter" class="filter-select" onchange="applyFilter()">
+                <option value="geral" selected>Geral</option>
+                <option value="3">Alta Performance</option>
+                <option value="2">Desempenho Moderado</option>
+                <option value="1">Baixa Performance</option>
+            </select>
+        </div>            
+        <div class="table-container">
+            <table id="myTable">
+                <tr>
+                    <th>TV (R$)</th>
+                    <th>Rádio (R$)</th>
+                    <th>Jornal (R$)</th>
+                    <th>Vendas</th>
+                    <th>Excluir</th>
+                </tr>
+            </table>        
+        </div>
+    </section>    
+
+    <script src="scripts.js"></script>
+</body>
+</html>
